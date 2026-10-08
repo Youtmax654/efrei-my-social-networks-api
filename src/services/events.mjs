@@ -72,6 +72,41 @@ const eventService = {
     return await event.save();
   },
 
+  attendEvent: async (id, userId) => {
+    const event = await getEventOrThrow(id);
+
+    if (!event.isPublic) {
+      const error = new Error("Seuls les événements publics peuvent être rejoints directement");
+      error.status = 403;
+      throw error;
+    }
+
+    if (event.participants.some((participantId) => participantId.toString() === userId.toString())) {
+      const error = new Error("Vous participez déjà à cet événement");
+      error.status = 409;
+      throw error;
+    }
+
+    event.participants.push(userId);
+    return await event.save();
+  },
+
+  leaveEvent: async (id, userId) => {
+    const event = await getEventOrThrow(id);
+    const participantIndex = event.participants.findIndex(
+      (participantId) => participantId.toString() === userId.toString()
+    );
+
+    if (participantIndex === -1) {
+      const error = new Error("Vous ne participez pas à cet événement");
+      error.status = 404;
+      throw error;
+    }
+
+    event.participants.splice(participantIndex, 1);
+    return await event.save();
+  },
+
   getEvents: async (userId) => {
     return await Event.find({
       $or: [

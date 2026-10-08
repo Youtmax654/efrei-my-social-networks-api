@@ -56,6 +56,24 @@ export const createGroupEvent = async (req, res) => {
   }
 };
 
+export const attendEvent = async (req, res) => {
+  try {
+    const event = await eventService.attendEvent(req.params.id, getUserId(req));
+    res.status(200).json(event);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+  }
+};
+
+export const leaveEvent = async (req, res) => {
+  try {
+    const event = await eventService.leaveEvent(req.params.id, getUserId(req));
+    res.status(200).json(event);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+  }
+};
+
 export const getEvents = async (req, res) => {
   try {
     const events = await eventService.getEvents(getUserId(req));
