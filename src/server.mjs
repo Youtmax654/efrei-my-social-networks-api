@@ -1,8 +1,10 @@
 import express from "express";
 
 import mongoose from "mongoose";
+import swaggerUi from "swagger-ui-express";
 import config from "./config.mjs";
 import verifyJWT from "./middlewares/verify-jwt.mjs";
+import openapi from "./openapi.mjs";
 import apiV1Router from "./routes/index.mjs";
 import unless from "./utils/unless.mjs";
 
@@ -55,6 +57,7 @@ const Server = class Server {
   middleware() {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
+    this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapi));
     this.app.use(unless(verifyJWT, [
       "/api/v1/auth/register",
       "/api/v1/auth/login",
@@ -74,7 +77,7 @@ const Server = class Server {
       this.middleware();
       this.routes();
       await this.dbConnect();
-      this.app.listen(3000);
+      this.app.listen(this.config.port);
     } catch (e) {
       console.error("Error while starting the server: ", e);
     }
