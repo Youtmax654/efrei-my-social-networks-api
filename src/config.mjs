@@ -2,7 +2,7 @@ export default {
   development: {
     type: 'development',
     port: 3000,
-    mongodb: ""
+    mongodb: process.env.MONGODB_URI || ""
   },
   production: {
     type: 'production',

@@ -1,8 +1,6 @@
-import dotenv from "dotenv";
+import 'dotenv/config';
 import Server from "./src/server.mjs";
-
-dotenv.config();
 
 const server = new Server();
 
-server.run();
+await server.run();

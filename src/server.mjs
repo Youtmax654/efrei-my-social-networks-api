@@ -1,12 +1,53 @@
 import express from "express";
 
-import * as https from "https";
-
-import initRoutes from "./controllers/routes.mjs";
+import mongoose from "mongoose";
+import config from "./config.mjs";
+import apiV1Router from "./routes/index.mjs";
 
 const Server = class Server {
   constructor() {
     this.app = express();
+    this.config = config[process.argv[2]] || config.development
+  }
+
+  async dbConnect() {
+    console.log("Connecting to the database...");
+
+    const host = this.config.mongodb;
+    this.connect = mongoose.connection;
+
+    this.connect.on("connected", () => {
+      console.log("Database connection established successfully.");
+    });
+
+    this.connect.on("error", (err) => {
+      console.error("Database connection error:", err.message);
+    });
+
+    this.connect.on("disconnected", () => {
+      console.warn("Database connection lost. Driver is attempting to reconnect...");
+    });
+
+    const gracefulExit = async () => {
+      try {
+        await this.connect.close();
+        console.log("Database connection closed successfully.");
+        process.exit(0);
+      } catch (err) {
+        console.error("Error while closing the database connection:", err);
+        process.exit(1);
+      }
+    };
+
+    process.once("SIGINT", gracefulExit);
+    process.once("SIGTERM", gracefulExit);
+
+    try {
+      await mongoose.connect(host);
+    } catch (e) {
+      console.error("Error while connecting to the database on startup:", e.message);
+      throw e;
+    }
   }
 
   middleware() {
@@ -15,23 +56,15 @@ const Server = class Server {
   }
 
   routes() {
-    initRoutes(this.app, this.connect);
-    this.app.use((req, res) => {
-      res.status(404).json({
-        code: 404,
-        message: "Not found"
-      });
-    })
+    this.app.use("/api/v1", apiV1Router);
   }
 
-  run() {
+  async run() {
     try {
       this.middleware();
       this.routes();
-
-      https.createServer(options, this.app).listen(this.config.port, () => {
-        console.log(`Server running on port ${this.config.port}`);
-      });
+      await this.dbConnect();
+      this.app.listen(3000);
     } catch (e) {
       console.error("Error while starting the server: ", e);
     }
