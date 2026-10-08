@@ -1,6 +1,14 @@
 const unless = (middleware, paths) => {
   return (req, res, next) => {
-    if (paths.includes(req.path)) return next();
+    const isExcluded = paths.some((path) => {
+      if (path.includes("*")) {
+        const [prefix, suffix] = path.split("*");
+        return req.path.startsWith(prefix) && req.path.endsWith(suffix);
+      }
+      return path === req.path;
+    });
+
+    if (isExcluded) return next();
     return middleware(req, res, next);
   };
 };

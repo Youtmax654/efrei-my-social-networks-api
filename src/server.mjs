@@ -55,7 +55,11 @@ const Server = class Server {
   middleware() {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
-    this.app.use(unless(verifyJWT, ["/api/v1/auth/register", "/api/v1/auth/login"]));
+    this.app.use(unless(verifyJWT, [
+      "/api/v1/auth/register",
+      "/api/v1/auth/login",
+      "/api/v1/events/*/tickets/purchase",
+    ]));
   }
 
   routes() {
