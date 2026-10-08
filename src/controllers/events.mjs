@@ -33,6 +33,29 @@ export const createEvent = async (req, res) => {
   }
 };
 
+export const createGroupEvent = async (req, res) => {
+  try {
+    const userId = getUserId(req);
+    const { title, description, startDate, endDate, location, coverUrl, isPublic,
+      ticketingEnabled, shoppingListEnabled, carpoolingEnabled } = req.body || {};
+
+    if (!title || !description || !startDate || !endDate || !location) {
+      const error = new Error("Tous les champs obligatoires doivent être renseignés");
+      error.status = 400;
+      throw error;
+    }
+
+    const event = await eventService.createGroupEvent({
+      title, description, startDate, endDate, location, coverUrl, isPublic,
+      ticketingEnabled, shoppingListEnabled, carpoolingEnabled,
+    }, userId, req.group);
+
+    res.status(201).json(event);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+  }
+};
+
 export const getEvents = async (req, res) => {
   try {
     const events = await eventService.getEvents(getUserId(req));

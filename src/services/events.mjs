@@ -55,6 +55,23 @@ const eventService = {
     return await event.save();
   },
 
+  createGroupEvent: async (eventData, userId, group) => {
+    validateEventDates(eventData.startDate, eventData.endDate);
+
+    const participants = [...new Map(
+      group.members.map((memberId) => [memberId.toString(), memberId])
+    ).values()];
+
+    const event = new Event({
+      ...eventData,
+      groupId: group._id,
+      organizers: [userId],
+      participants,
+    });
+
+    return await event.save();
+  },
+
   getEvents: async (userId) => {
     return await Event.find({
       $or: [
