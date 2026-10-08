@@ -121,3 +121,70 @@ export const deleteGroup = async (req, res) => {
     res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
   }
 };
+
+export const joinGroup = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    if (!userId) {
+      const error = new Error("Unauthorized");
+      error.status = 401;
+      throw error;
+    }
+
+    const group = await groupService.joinGroup(req.params.id, userId);
+    res.status(200).json(group);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+  }
+};
+
+export const leaveGroup = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    if (!userId) {
+      const error = new Error("Unauthorized");
+      error.status = 401;
+      throw error;
+    }
+
+    const group = await groupService.leaveGroup(req.params.id, userId);
+    res.status(200).json(group);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+  }
+};
+
+export const addMember = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    if (!userId) {
+      const error = new Error("Unauthorized");
+      error.status = 401;
+      throw error;
+    }
+
+    const targetUserId = req.body?.userId;
+    const group = await groupService.addMember(req.params.id, userId, targetUserId);
+    res.status(200).json(group);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+  }
+};
+
+export const updateAdmin = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    if (!userId) {
+      const error = new Error("Unauthorized");
+      error.status = 401;
+      throw error;
+    }
+
+    const { userId: targetUserId, action } = req.body || {};
+    const group = await groupService.updateAdmin(req.params.id, userId, targetUserId, action);
+    res.status(200).json(group);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+  }
+};
+
