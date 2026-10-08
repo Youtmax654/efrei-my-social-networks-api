@@ -2,7 +2,9 @@ import express from "express";
 
 import mongoose from "mongoose";
 import config from "./config.mjs";
+import verifyJWT from "./middlewares/verify-jwt.mjs";
 import apiV1Router from "./routes/index.mjs";
+import unless from "./utils/unless.mjs";
 
 const Server = class Server {
   constructor() {
@@ -53,10 +55,14 @@ const Server = class Server {
   middleware() {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(unless(verifyJWT, ["/api/v1/auth/register", "/api/v1/auth/login"]));
   }
 
   routes() {
     this.app.use("/api/v1", apiV1Router);
+    this.app.use((req, res) => {
+      res.status(404).json({ message: "Not found" });
+    });
   }
 
   async run() {
