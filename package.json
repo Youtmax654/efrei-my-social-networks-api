@@ -1,0 +1,24 @@
+{
+  "name": "my-social-networks-api",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Youtmax654/efrei-my-social-networks-api#readme",
+  "bugs": {
+    "url": "https://github.com/Youtmax654/efrei-my-social-networks-api/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Youtmax654/efrei-my-social-networks-api.git"
+  },
+  "license": "MIT",
+  "author": "Maxime PENN",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.6",
+    "express": "^5.2.1"
+  }
+}
