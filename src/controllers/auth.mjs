@@ -29,3 +29,20 @@ export const register = async (req, res) => {
     res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
   }
 }
+
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body || {};
+
+    if (!email || !password) {
+      const error = new Error("L'email et le mot de passe sont requis");
+      error.status = 400;
+      throw error;
+    }
+
+    const token = await userService.login({ email, password });
+    res.status(200).json({ token });
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+  }
+}
