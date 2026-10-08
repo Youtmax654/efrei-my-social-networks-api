@@ -25,7 +25,7 @@ const questionSchema = new mongoose.Schema({
       message: "Chaque question doit avoir au moins deux options aux identifiants uniques",
     },
   },
-}, { _id: false });
+});
 
 const pollSchema = new mongoose.Schema({
   eventId: {

@@ -31,3 +31,25 @@ export const closePoll = async (req, res) => {
     res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
   }
 };
+
+export const votePoll = async (req, res) => {
+  try {
+    const vote = await pollService.vote(
+      req.params.pollId,
+      getUserId(req),
+      req.body?.answers
+    );
+    res.status(201).json(vote);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+  }
+};
+
+export const getPollResults = async (req, res) => {
+  try {
+    const results = await pollService.getResults(req.params.pollId, getUserId(req));
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+  }
+};
