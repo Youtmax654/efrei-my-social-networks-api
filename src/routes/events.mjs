@@ -2,6 +2,7 @@ import { Router } from "express";
 import { addPhoto, getAlbum } from "../controllers/albums.mjs";
 import { attendEvent, createEvent, deleteEvent, getEventById, getEvents, leaveEvent, updateEvent } from "../controllers/events.mjs";
 import { createPoll } from "../controllers/polls.mjs";
+import { createTicketTier, getTicketTiers } from "../controllers/ticket-tiers.mjs";
 
 const router = Router();
 
@@ -11,6 +12,8 @@ router.post("/:id/leave", leaveEvent);
 router.get("/:eventId/album", getAlbum);
 router.post("/:eventId/album/photos", addPhoto);
 router.post("/:eventId/polls", createPoll);
+router.post("/:eventId/ticket-tiers", createTicketTier);
+router.get("/:eventId/ticket-tiers", getTicketTiers);
 router.get("/", getEvents);
 router.get("/:id", getEventById);
 router.patch("/:id", updateEvent);
